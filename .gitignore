@@ -1,0 +1,4 @@
+# ignore folders and files for Intellij
+.idea
+ModelEngine.iml
+target
