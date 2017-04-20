@@ -7,12 +7,14 @@ import MySQLdb
 
 class DataProvider(object):
     def __init__(self, data_configure):
-        if not set(["host", "user", "password", "db_name", "table_name"]).issubset(set(data_configure.keys())):
+        if not set(["host", "user", "password", "db_name", "table_name", "ids"]).issubset(set(data_configure.keys())):
             raise DataConfigureException({"message": "Not all configure key provided!"})
         self.host = data_configure["host"]
         self.user = data_configure["user"]
         self.password = data_configure["password"]
         self.db_name = data_configure["db_name"]
+        self.table_name = data_configure["table_name"]
+        self.ids = data_configure["ids"]
         self.connector = None
 
     def __get_connect(self):
@@ -34,11 +36,14 @@ class DataProvider(object):
             sql = """select * from %s""" % table_name
         return self.run_sql(sql)
 
+    def fetch_data(self):
+        sql = """select * from %s where sub in %s""" %(self.table_name, self.ids)
+        return self.run_sql(sql)
 
 if __name__ == '__main__':
     configure = {"host": "localhost", "user": "root", "password": "itcm123", "db_name": "itcm_database",
-                 "table_name": "data_sample"}
+                 "table_name": "data_sample", "ids": "(1)"}
     mysql = DataProvider(configure)
-    table_data = mysql.fetch_all('data_sample')
-    print(len(table_data))
-    print(table_data[1])
+    table_data = mysql.fetch_data()
+    print(table_data)
+    print(type(table_data))

@@ -1,5 +1,6 @@
 package sg.ntu.dmal.model.engine.data;
 
+import org.apache.log4j.Logger;
 import sg.ntu.dmal.model.engine.api.DataSource;
 import java.util.List;
 
@@ -10,10 +11,15 @@ import java.util.List;
  * @CreateDate: 28/3/17
  */
 public class RawDataSource implements DataSource{
-    private List<Record> values;
+    private static final Logger LOGGER = Logger.getLogger(RawDataSource.class);
+
+    /**
+     * Record list store all the records.
+     */
+    private List<Record> recordList;
 
     public RawDataSource(List<Record> features){
-        this.values = features;
+        this.recordList = features;
     }
 
     @Override
@@ -25,10 +31,12 @@ public class RawDataSource implements DataSource{
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(this.getDataType().toString()).append(";");
-        for(int i= 0; i< values.size() - 1; i++){
-            builder.append(values.get(i).toString()).append(";");
+        LOGGER.debug("Records list size = " + recordList.size());
+        for(int i= 0; i< recordList.size() - 1; i++){
+            builder.append(recordList.get(i).toString()).append(";");
         }
-        builder.append(values.get(values.size() - 1));
+        builder.append(recordList.get(recordList.size() - 1));
+        LOGGER.debug(builder.toString());
         return builder.toString();
     }
 }

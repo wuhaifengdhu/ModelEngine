@@ -24,6 +24,7 @@ public class PythonModelResult implements Result{
         else {
             data = new ArrayList<>();
         }
+        System.out.println("Get result in java: " + result);
         String info = result.substring(1, this.result.length() - 1);
         String[] arr = info.split(",");
         for (String anArr : arr) {

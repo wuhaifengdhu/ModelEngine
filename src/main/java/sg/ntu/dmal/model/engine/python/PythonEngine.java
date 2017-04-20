@@ -7,6 +7,7 @@ import sg.ntu.dmal.model.engine.api.Engine;
 import sg.ntu.dmal.model.engine.api.Model;
 import sg.ntu.dmal.model.engine.api.Result;
 import sg.ntu.dmal.model.engine.data.MysqlDataSource;
+import sg.ntu.dmal.model.engine.data.RawDataSource;
 import sg.ntu.dmal.model.engine.exception.ModelEngineErrorCode;
 import sg.ntu.dmal.model.engine.exception.ModelEngineException;
 
@@ -21,22 +22,6 @@ import java.io.*;
 public class PythonEngine implements Engine{
     private static final Logger logger = Logger.getLogger(PythonEngine.class);
 
-    public static void main(String[] args){
-        PythonEngine engine = new PythonEngine();
-        PythonModel model = new PythonModel("pmv");
-        MysqlDataSource dataSource = new MysqlDataSource("localhost", "root", "itcm123",
-                "itcm_database", "data_sample");
-        try {
-            PythonModelResult result = (PythonModelResult) engine.run(model, dataSource);
-            System.out.println("Get result from python model:" + result.toString());
-            System.out.println("Data[0]=" + result.getListData().get(0));
-        } catch (IOException e) {
-            System.out.println("IO Exception happen!");
-        } catch (InterruptedException e) {
-            System.out.println("Interrupted Exception happen!");
-        }
-    }
-
     @Override
     public Result run(Model model, DataSource dataSource) throws ModelEngineException, IOException, InterruptedException {
         if(! validCheck(model, dataSource)){
@@ -48,14 +33,14 @@ public class PythonEngine implements Engine{
         pb.directory(new File("src/main/python"));
         Process process = pb.start();
         int errCode = process.waitFor();
-        System.out.println("Command executed, any errors? " + (errCode == 0 ? "No" : "Yes"));
+        logger.debug("Command executed, any errors? " + (errCode == 0 ? "No" : "Yes"));
         String output = output(process.getInputStream());
-        System.out.println("Output:\n" + output);
+        logger.debug("Output:\n" + output);
         return new PythonModelResult(output);
     }
 
     private boolean validCheck(Model model, DataSource dataSource){
-        return model instanceof PythonModel && dataSource instanceof MysqlDataSource;
+        return model instanceof PythonModel && (dataSource instanceof MysqlDataSource || dataSource instanceof RawDataSource);
     }
 
     private String output(InputStream inputStream) throws IOException {

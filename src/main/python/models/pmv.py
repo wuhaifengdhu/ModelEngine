@@ -1,4 +1,4 @@
-from lib.pmv_record import PmvBrain
+from lib.pmv_brain import PmvBrain
 
 
 class PMV(object):

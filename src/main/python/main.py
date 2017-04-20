@@ -12,7 +12,7 @@ def get_data_from_db(para_list):
         key, value = pair.split(':')
         data_configure[key] = value
     mysql = DataProvider(data_configure)
-    return mysql.fetch_all(data_configure["table_name"], 2)
+    return mysql.fetch_data()
 
 
 def get_data_from_raw(para_list):
@@ -20,6 +20,7 @@ def get_data_from_raw(para_list):
     for record in para_list:
         raw_data.append([get_digital_value(field) for field in record.split(",")])
     return raw_data
+
 
 def get_digital_value(field):
     if 'L' in field:
@@ -47,7 +48,7 @@ def main(args=()):
     paras = parser.parse_args(args)
     # print(paras.data, paras.model)
     """
-    >>> python main.py -m "pmv" -d "MYSQL;host:localhost;user:root;password:itcm123;db_name:itcm_database;table_name:data_sample"
+    >>> python main.py -m "pmv" -d "MYSQL;host:localhost;user:root;password:itcm123;db_name:itcm_database;table_name:data_sample;ids:(1)"
     >>> myData myModel
     """
     raw_data = get_data(paras.data)
